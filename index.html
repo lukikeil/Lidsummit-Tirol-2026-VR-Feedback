@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VR Station Lid Summit Tirol 2026: Feedback-Auswertung</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #E9F0ED;
+  --ink: #14282B;
+  --muted: #526969;
+  --line: #C3D2CE;
+  --teal-soft: #CFE3E1;
+  --bar: #6FA7AC;
+  --red: #B2302A;
+  --hover: #DCE8E5;
+  --sans: 'Schibsted Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+  color-scheme: light dark;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1B1D; --ink: #E3EEEB; --muted: #9DB4B1; --line: #27403F;
+    --teal-soft: #1D3A3D; --bar: #4F9FA7; --red: #F0766B; --hover: #16292C;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1B1D; --ink: #E3EEEB; --muted: #9DB4B1; --line: #27403F;
+  --teal-soft: #1D3A3D; --bar: #4F9FA7; --red: #F0766B; --hover: #16292C;
+}
+*, *::before, *::after { box-sizing: inherit; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 1rem/1.55 var(--sans); }
+main { max-width: 880px; margin: 0 auto; padding: clamp(1.5rem, 5vw, 3.5rem) clamp(1rem, 4vw, 2rem) 4rem; }
+
+h1 { font-size: clamp(1.9rem, 5vw, 3.1rem); line-height: 1.1; letter-spacing: -0.02em; font-weight: 700; margin: 0 0 1.25rem; max-width: 24ch; text-wrap: balance; }
+h2 { font-size: 1.35rem; line-height: 1.25; letter-spacing: -0.01em; font-weight: 700; margin: 0 0 .4rem; }
+p { margin: 0 0 1rem; max-width: 68ch; }
+.site-title { color: var(--muted); font-weight: 500; margin-bottom: .75rem; }
+.hint { color: var(--muted); margin-bottom: 1.25rem; }
+section { margin-top: 3.5rem; }
+header section, header .intro { margin-top: 0; }
+
+/* Themenbalken */
+#bars { display: grid; gap: .15rem; margin: 0 -.5rem; }
+.bar { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .35rem .75rem; width: 100%; text-align: left; background: none; border: 0; padding: .65rem .5rem; border-radius: 6px; cursor: pointer; color: inherit; font: inherit; }
+.bar:hover { background: var(--hover); }
+.bar .label { font-weight: 500; }
+.bar .count { color: var(--muted); font-variant-numeric: tabular-nums; }
+.bar .track { grid-column: 1 / -1; height: 10px; background: var(--teal-soft); border-radius: 5px; overflow: hidden; display: block; }
+.bar .fill { display: block; height: 100%; width: 0; background: var(--bar); border-radius: 5px; transition: width .8s cubic-bezier(.2, .7, .2, 1); }
+.bar[aria-pressed="true"] { background: var(--hover); }
+.bar[aria-pressed="true"] .label { font-weight: 700; }
+.bar[aria-pressed="true"] .fill { background: var(--red); }
+
+:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+
+/* Steuerung der Liste */
+.controls { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; align-items: center; margin: 1rem 0 1.25rem; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button { background: none; border: 0; padding: .45rem .8rem; font: inherit; color: inherit; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.link { background: none; border: 0; padding: .3rem 0; font: inherit; color: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.link[hidden] { display: none; }
+#status { color: var(--muted); margin: 0 0 .5rem; }
+
+/* Rückmeldungen */
+.voice { border-top: 1px solid var(--line); }
+.voice:last-child { border-bottom: 1px solid var(--line); }
+.voice[hidden] { display: none; }
+.voice summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .1rem 1rem; padding: .95rem .25rem; }
+.voice summary::-webkit-details-marker { display: none; }
+.voice .who { font-weight: 700; }
+.voice .who::before { content: ""; display: inline-block; width: .45em; height: .45em; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); margin-right: .8em; transition: transform .2s; }
+.voice[open] .who::before { transform: rotate(45deg) translate(-2px, -2px); }
+.voice .age { color: var(--muted); font-variant-numeric: tabular-nums; }
+.voice .tags { grid-column: 1 / -1; color: var(--muted); font-size: .92rem; padding-left: 1.45rem; }
+.voice .body { padding: .1rem .25rem 1.3rem 1.7rem; font-family: var(--serif); font-size: 1.18rem; line-height: 1.65; max-width: 64ch; }
+.voice .body p { font-family: inherit; margin: 0 0 .75rem; }
+.voice .orig { font-family: var(--sans); font-size: .92rem; color: var(--muted); line-height: 1.5; }
+
+/* Tabelle */
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; min-width: 480px; }
+th, td { text-align: left; padding: .7rem .75rem .7rem 0; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+th { font-weight: 500; color: var(--muted); }
+td:first-child, th:first-child { padding-left: 0; }
+
+/* Empfehlungen */
+ol.recs { list-style: none; margin: 1.25rem 0 0; padding: 0; counter-reset: rec; }
+ol.recs li { counter-increment: rec; display: grid; grid-template-columns: 2.2rem minmax(0, 1fr); gap: .1rem .5rem; padding: 1rem 0; border-top: 1px solid var(--line); }
+ol.recs li:last-child { border-bottom: 1px solid var(--line); }
+ol.recs li::before { content: counter(rec); font-weight: 700; font-size: 1.35rem; color: var(--red); line-height: 1.25; }
+ol.recs h3 { font-size: 1.05rem; margin: 0; font-weight: 700; }
+ol.recs p { margin: .2rem 0 0; }
+ol.recs .facts { color: var(--muted); font-size: .92rem; }
+
+.method p { color: var(--muted); }
+
+@media (prefers-reduced-motion: reduce) {
+  .bar .fill, .voice .who::before { transition: none; }
+}
+@media print {
+  :root, :root[data-theme] { --bg: #fff; --ink: #000; --muted: #444; --line: #bbb; --teal-soft: #ddd; --bar: #777; --red: #000; --hover: #eee; }
+  .controls, .hint { display: none; }
+  .voice summary { break-after: avoid; }
+  details.voice > .body { display: block; }
+  main { padding-bottom: 2rem; }
+  ol.recs li { break-inside: avoid; }
+  .bar { cursor: default; }
+}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="site-title">VR Station beim Lid Summit Tirol 2026</p>
+    <h1>Die Station kommt gut an. Am häufigsten gewünscht: selbst am Modell schneiden.</h1>
+    <div class="intro">
+      <p>Die meisten Proband/innen waren sehr begeistert. Es wurden weniger Text und mehr interaktive Inhalte gewünscht. Konkret möchte man am Präparat während der OP selbst schneiden und die Schritte durchführen können. Außerdem wurde eine bessere anatomische Tiefe gewünscht. Für die älteren Proband/innen war die Steuerung meist etwas schwerer, für die jüngeren meist sehr intuitiv und einfach.</p>
+      <p>Der Großteil kam zu dem Schluss, dass ein VR-Modell wie dieses eine tolle Ergänzung in der Ausbildung von Assistenzärztinnen und Assistenzärzten wäre. Für den täglichen Gebrauch durch erfahrene Ärztinnen und Ärzte ist es aufgrund mangelnder Zeit eher ungeeignet. Ausnahme: neue Operationen.</p>
+    </div>
+  </header>
+
+  <section id="themen">
+    <h2>Was die Teilnehmenden genannt haben</h2>
+    <p class="hint">Klicke auf ein Thema, um darunter die passenden Rückmeldungen zu sehen. Eine Rückmeldung kann mehrere Themen enthalten.</p>
+    <div id="bars"></div>
+  </section>
+
+  <section id="stimmen">
+    <h2>Alle Rückmeldungen</h2>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Altersgruppe">
+        <button type="button" data-age="all" aria-pressed="true">Alle</button>
+        <button type="button" data-age="jung" aria-pressed="false">28 bis 35 Jahre</button>
+        <button type="button" data-age="alt" aria-pressed="false">45 bis 60 Jahre</button>
+      </div>
+      <button type="button" class="link" id="openAll">Alle aufklappen</button>
+      <button type="button" class="link" id="closeAll">Alle zuklappen</button>
+      <button type="button" class="link" id="reset" hidden>Filter zurücksetzen</button>
+    </div>
+    <p id="status" aria-live="polite"></p>
+    <div id="voices"></div>
+  </section>
+
+  <section id="alter">
+    <h2>Nach Altersgruppe</h2>
+    <p class="hint">Anzahl der Rückmeldungen, die das Thema enthalten. Die Gruppen sind klein, die Zahlen zeigen nur Tendenzen.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Thema</th><th>28 bis 35 Jahre (10 Personen)</th><th>45 bis 60 Jahre (5 Personen)</th></tr></thead>
+        <tbody id="ageRows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="empfehlungen">
+    <h2>Empfehlungen</h2>
+    <p class="hint">Die Reihenfolge ist ein Vorschlag. Der Aufwand ist eine grobe Annahme und sollte vom Entwicklungsteam eingeschätzt werden.</p>
+    <ol class="recs" id="recs"></ol>
+    <p style="margin-top:1.25rem">Weitere Einzelideen: eine Sehkorrektur an der Brille (Rückmeldung 11), eine Augenlidoperation als Inhalt (13), Live-OPs schematisch begleitend zeigen (14) und das fehlende Widerstandsgefühl in den Händen (10).</p>
+  </section>
+
+  <section class="method">
+    <h2>Methodik</h2>
+    <p>15 Teilnehmende, Altersklassen von 28 bis 60 Jahren, freie Textrückmeldungen beim Lid Summit Tirol 2026. Die Themen wurden aus den Texten abgeleitet, Mehrfachzuordnungen sind möglich. Proband/in 13 gab an, kein Arzt zu sein. Alle Rückmeldungen sind anonym wiedergegeben.</p>
+  </section>
+</main>
+
+<script>
+(function () {
+  var N = 15;
+  var P = [
+    { n: 1, age: 30, text: ['Gute Idee, vor allem für junge Ärztinnen und Ärzte sehr interessant. Ich könnte mir vorstellen, dieses Programm im Klinikalltag zu verwenden. Die Frage ist nur, ob dafür wirklich Zeit ist. Aber vor einer Operation wäre es sehr angenehm, die Operation mit der VR-Brille durchzugehen. Cool wäre, wenn man schon am Modell etwas verändern könnte, schneiden, anheben etc.'] },
+    { n: 2, age: 60, text: ['Für Assistenzärzte würde ich das sofort im Klinikalltag verwenden. Ich brauche das nicht mehr, aber für die Ausbildung ist es perfekt. Der Controller verwirrt mich. Wir haben das mit einer Gestensteuerung auch schon einmal gemacht, das war besser. Da konnten wir nur mit unseren Händen das Modell vergrößern, alle Schichten ein- und ausblenden und selbst operieren.'] },
+    { n: 3, age: 50, text: ['Gefällt mir gut, ich würde es verwenden. Aber die Modelle sind nicht akkurat, und ich müsste am Modell operieren können. Gut wäre, wenn man am Modell selbst anzeichnen und schneiden könnte. Ich hätte auch gern mehrere Schichten zum Ein- und Ausblenden.'] },
+    { n: 4, age: 30, text: ['Super cool, aber ich brauche mehr anatomische Tiefe. Ich würde das Modell aber gerne verwenden.'] },
+    { n: 5, age: 30, text: ['Sehr cool, um das Anatomiewissen noch einmal aufzufrischen.'] },
+    { n: 6, age: 50, text: ['Zu viel Text! Cool wäre, wenn man das mit einem Quiz verbinden oder einen anderen interaktiven Zugang zum Modell schaffen würde.'] },
+    { n: 7, age: 45, text: ['Super Idee, gefällt mir sehr gut. Ich würde das für OPs im Klinikalltag verwenden. Vielleicht nicht unbedingt für mich, aber für die Ausbildung der Assistenzärzte ist es genial! Super Konzept! Man müsste die Anatomie und die OPs noch genauer machen.'] },
+    { n: 8, age: 30, text: ['Super, ich würde das gerne verwenden, aber man muss selbst schneiden und interagieren können.'] },
+    { n: 9, age: 30, text: ['Sehr cool und hilfreich, aber man muss es noch interaktiver machen. Der WOW-Effekt ist groß.'] },
+    { n: 10, age: 35, text: ['Ich würde bei einem VR-Modell nie so viel Text verwenden. Außerdem müsste man im VR-Modell schneiden können. Ich sehe es auch als Problem, dass man bei einer VR-Brille keinen Widerstand in den Händen hat. Aber zur Weiterbildung und zur Auffrischung vor einer OP ist es eine coole Idee. Ich würde es für die Ausbildung nutzen.'] },
+    { n: 11, age: 30, text: ['Ich würde mir wünschen, dass man an der Brille eine Korrektur der Fehlsichtigkeit anbringen könnte. Ich bin kurzsichtig und habe alles recht unscharf gesehen. Aber ansonsten sehr cool! Ich könnte mir vorstellen, es im Klinikalltag für die Assistenzärzte zu verwenden. In einer Rotation vor der OP ist es sicher ein cooles Feature. Gratulation zu so einem tollen Programm!'] },
+    { n: 12, age: 35, text: ['Eher für große Operationen, beispielsweise am Abdomen, kann ich mir das gut vorstellen. Speziell für die Augen glaube ich nicht, dass man so etwas verwenden würde.'] },
+    { n: 13, age: 35, text: ['Ich mag es wirklich sehr, es ist wirklich beeindruckend. Aber ich würde mir noch eine Augenlidoperation wünschen. Aber wirklich beeindruckende, gute Arbeit! Ich bin allerdings kein Arzt, wollte ich nur sagen.'], orig: 'Original auf Englisch: I really like it. It is really impressive, but I would love to have the lid operation. But really impressive, good work! I am not a doctor though, just saying.' },
+    { n: 14, age: 28, text: ['Mir gefällt das Programm gut zum Lernen. Ich fände es gut, wenn Live-OPs schematisch und begleitend gezeigt würden.'] },
+    { n: 15, age: 50, text: ['Die Bedienung fällt mir schwer. Aber an sich ist es ein tolles System. Ich glaube, ich hätte zu wenig Zeit dafür im Klinikalltag, aber es ist super für die Ausbildung.'] }
+  ];
+
+  var T = [
+    { id: 'lernen', label: 'Für Ausbildung und Lernen geeignet', short: 'Ausbildung und Lernen', ids: [1, 2, 5, 7, 10, 11, 14, 15] },
+    { id: 'interaktion', label: 'Selbst schneiden und interagieren', short: 'Schneiden und Interaktion', ids: [1, 2, 3, 6, 8, 9, 10] },
+    { id: 'vorop', label: 'Einsatz zur Vorbereitung vor einer OP', short: 'Vorbereitung vor der OP', ids: [1, 7, 10, 11] },
+    { id: 'anatomie', label: 'Mehr anatomische Tiefe und Genauigkeit', short: 'Anatomische Tiefe', ids: [3, 4, 7] },
+    { id: 'text', label: 'Zu viel Text', short: 'Zu viel Text', ids: [6, 10] },
+    { id: 'steuerung', label: 'Steuerung schwierig', short: 'Steuerung', ids: [2, 15] },
+    { id: 'schichten', label: 'Schichten ein- und ausblenden', short: 'Schichten', ids: [2, 3] },
+    { id: 'zeit', label: 'Zeitmangel im Klinikalltag', short: 'Zeitmangel', ids: [1, 15] },
+    { id: 'einzel', label: 'Einzelne Ideen und Hinweise', short: 'Einzelidee', ids: [10, 11, 12, 13, 14] }
+  ];
+  var byId = {};
+  T.forEach(function (t) { byId[t.id] = t; });
+
+  var theme = null, age = 'all';
+  var $ = function (id) { return document.getElementById(id); };
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Themenbalken
+  var barsEl = $('bars');
+  T.forEach(function (t) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'bar';
+    b.setAttribute('aria-pressed', 'false');
+    b.dataset.id = t.id;
+    b.innerHTML = '<span class="label">' + t.label + '</span><span class="count">' + t.ids.length + ' von ' + N + '</span><span class="track"><span class="fill" data-w="' + (t.ids.length / N * 100) + '"></span></span>';
+    b.addEventListener('click', function () {
+      theme = (theme === t.id) ? null : t.id;
+      update();
+      if (theme) $('stimmen').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    });
+    barsEl.appendChild(b);
+  });
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () {
+      barsEl.querySelectorAll('.fill').forEach(function (f) { f.style.width = f.dataset.w + '%'; });
+    });
+  });
+
+  // Rückmeldungen
+  var voicesEl = $('voices');
+  P.forEach(function (p) {
+    var tags = T.filter(function (t) { return t.ids.indexOf(p.n) > -1; }).map(function (t) { return t.short; }).join(', ');
+    var d = document.createElement('details');
+    d.className = 'voice';
+    d.dataset.n = p.n;
+    d.innerHTML = '<summary><span class="who">Proband/in ' + p.n + '</span><span class="age">' + p.age + ' Jahre</span><span class="tags">' + tags + '</span></summary>' +
+      '<div class="body">' + p.text.map(function (x) { return '<p>' + x + '</p>'; }).join('') + (p.orig ? '<p class="orig">' + p.orig + '</p>' : '') + '</div>';
+    voicesEl.appendChild(d);
+  });
+
+  function inAge(p) { return age === 'all' || (age === 'jung' ? p.age < 40 : p.age >= 40); }
+
+  function update() {
+    barsEl.querySelectorAll('.bar').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.dataset.id === theme));
+    });
+    document.querySelectorAll('.seg button').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.dataset.age === age));
+    });
+    var shown = 0;
+    P.forEach(function (p) {
+      var ok = inAge(p) && (!theme || byId[theme].ids.indexOf(p.n) > -1);
+      var el = voicesEl.querySelector('[data-n="' + p.n + '"]');
+      el.hidden = !ok;
+      if (ok) shown++;
+    });
+    var parts = [];
+    if (theme) parts.push('Thema: ' + byId[theme].label);
+    if (age !== 'all') parts.push(age === 'jung' ? '28 bis 35 Jahre' : '45 bis 60 Jahre');
+    $('status').textContent = shown + ' von ' + N + ' Rückmeldungen' + (parts.length ? ' (' + parts.join(', ') + ')' : '');
+    $('reset').hidden = !(theme || age !== 'all');
+  }
+
+  document.querySelectorAll('.seg button').forEach(function (b) {
+    b.addEventListener('click', function () { age = b.dataset.age; update(); });
+  });
+  $('reset').addEventListener('click', function () { theme = null; age = 'all'; update(); });
+  $('openAll').addEventListener('click', function () { voicesEl.querySelectorAll('details').forEach(function (d) { d.open = true; }); });
+  $('closeAll').addEventListener('click', function () { voicesEl.querySelectorAll('details').forEach(function (d) { d.open = false; }); });
+
+  // Altersgruppen-Tabelle
+  var young = P.filter(function (p) { return p.age < 40; }).map(function (p) { return p.n; });
+  var old = P.filter(function (p) { return p.age >= 40; }).map(function (p) { return p.n; });
+  function cnt(t, group) { return t.ids.filter(function (n) { return group.indexOf(n) > -1; }).length; }
+  ['interaktion', 'anatomie', 'text', 'steuerung', 'lernen'].forEach(function (id) {
+    var t = byId[id];
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td>' + t.label + '</td><td>' + cnt(t, young) + ' von ' + young.length + '</td><td>' + cnt(t, old) + ' von ' + old.length + '</td>';
+    $('ageRows').appendChild(tr);
+  });
+
+  // Empfehlungen
+  var R = [
+    { t: 'interaktion', title: 'Selbst schneiden und interagieren ermöglichen', text: 'Schneiden, Anzeichnen und Anheben direkt am Modell, die OP-Schritte selbst durchgehen.', effort: 'hoch' },
+    { t: 'text', title: 'Text reduzieren, Quiz und interaktive Elemente ergänzen', text: 'Kurze Hinweise statt Textblöcken und ein Quiz-Modus als zusätzlicher Zugang zum Modell.', effort: 'niedrig' },
+    { t: 'anatomie', title: 'Anatomie und OP-Schritte genauer ausarbeiten', text: 'Mehr anatomische Tiefe und genauere Modelle, damit die Station auch für Fachleute überzeugt.', effort: 'hoch' },
+    { t: 'steuerung', title: 'Bedienung vereinfachen', text: 'Eine Gestensteuerung als Option anbieten. Beide Rückmeldungen kamen aus der Gruppe ab 45 Jahren.', effort: 'mittel' },
+    { t: 'schichten', title: 'Schichten einzeln ein- und ausblenden', text: 'Mehrere Gewebeschichten getrennt schaltbar machen.', effort: 'mittel' },
+    { t: 'lernen', title: 'Einsatzzweck schärfen', text: 'Ausbildung, Auffrischung und OP-Vorbereitung in den Mittelpunkt stellen. Für erfahrene Ärztinnen und Ärzte ist vor allem der Einsatz bei neuen Operationen interessant.', effort: 'niedrig' }
+  ];
+  R.forEach(function (r) {
+    var li = document.createElement('li');
+    li.innerHTML = '<div><h3>' + r.title + '</h3><p>' + r.text + '</p><p class="facts">Genannt in ' + byId[r.t].ids.length + ' von ' + N + ' Rückmeldungen. Aufwand (Annahme): ' + r.effort + '.</p></div>';
+    $('recs').appendChild(li);
+  });
+
+  // Drucken: alles aufklappen
+  var before = [];
+  window.addEventListener('beforeprint', function () {
+    before = [];
+    voicesEl.querySelectorAll('details').forEach(function (d) { before.push(d.open); d.open = true; });
+  });
+  window.addEventListener('afterprint', function () {
+    voicesEl.querySelectorAll('details').forEach(function (d, i) { d.open = !!before[i]; });
+  });
+
+  update();
+})();
+</script>
+</body>
+</html>
